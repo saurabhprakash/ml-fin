@@ -4,17 +4,19 @@ import datetime
 from app import constants
 
 
-class DataProcessor:
-
+class DOBProcessor:
+    """
+        Processes dob to get number of years and then classify into group
+        Persons would be classifed in 4 groups: young/adult/retiree/old
+    """
     def __init__(self):
         pass
 
-
-    def dob_processor(self, _date):
+    def date_processor(self, _date):
         """Process DOB to classify it in a group
             :parameter
                 _date: dob, format: "DD-MM-YYYY"
-            Returns number of years sice DOB, if format is incorrect
+            :returns: number of years sice DOB, if format is incorrect
             then returns None
         """
         today = datetime.date.today()
@@ -22,10 +24,29 @@ class DataProcessor:
             dob = datetime.datetime.strptime(_date, "%d-%b-%Y").date()
         except ValueError:
             return None
-
         years = int((today-dob).days / (365.25))
-        return years
+        return self.classify(years)
 
+    def classify(self, years):
+        """Takes number of years as input and classifies it to a group
+            :parameter
+                years: age of person
+            :returns: category to which person belongs
+                young(0)/adult(1)/retiree(2)/old(3)
+        """
+        if years < 18:
+            return 0
+        elif years >= 18 and years <= 60:
+            return 1
+        elif years > 60 and years <=80:
+            return 2
+        elif years > 80:
+            return 3
+
+class DataProcessor:
+
+    def __init__(self):
+        pass
 
     def line_processor(self, line):
         """Processes line data
@@ -37,11 +58,13 @@ class DataProcessor:
 
     def read_data_file(self):
         """Reads file and pre-processes data for logic implementation"""
+
+        dp = DOBProcessor()
         with open('input/data.csv', 'rt') as csvfile:
             spamreader = csv.reader(csvfile, delimiter=',')
             for row in spamreader:
                 print (row)
-                print (self.dob_processor(row[2].strip()))
+                print (dp.date_processor(row[2].strip()))
                 #print (','.join(row))
 
 d = DataProcessor()
