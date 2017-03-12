@@ -24,7 +24,7 @@ class DOBProcessor:
             dob = datetime.datetime.strptime(_date, "%d-%b-%Y").date()
         except ValueError:
             return None
-        years = int((today-dob).days / (365.25))
+        years = int((today-dob).days / constants.DAYS_IN_YEAR)
         return self.classify(years)
 
     def classify(self, years):
@@ -34,13 +34,13 @@ class DOBProcessor:
             :returns: category to which person belongs
                 young(0)/adult(1)/retiree(2)/old(3)
         """
-        if years < 18:
+        if years < constants.YOUNG_AGE:
             return 0
-        elif years >= 18 and years <= 60:
+        elif constants.YOUNG_AGE <= years <= constants.RETIREE_AGE:
             return 1
-        elif years > 60 and years <=80:
+        elif constants.RETIREE_AGE < years <= constants.OLD_AGE:
             return 2
-        elif years > 80:
+        elif years > constants.OLD_AGE:
             return 3
 
 class DataProcessor:
@@ -64,7 +64,7 @@ class DataProcessor:
             spamreader = csv.reader(csvfile, delimiter=',')
             for row in spamreader:
                 print (row)
-                print (dp.date_processor(row[2].strip()))
+                print (dp.date_processor(row[constants.DOB_INDEX].strip()))
                 #print (','.join(row))
 
 d = DataProcessor()
