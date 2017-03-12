@@ -13,7 +13,7 @@ class DataProcessor:
     def dob_processor(self, _date):
         """Process DOB to classify it in a group
             :parameter
-                _date: dob, format: "YYYY-MM-DD"
+                _date: dob, format: "DD-MM-YYYY"
             Returns number of years sice DOB, if format is incorrect
             then returns None
         """
@@ -41,7 +41,7 @@ class DataProcessor:
             spamreader = csv.reader(csvfile, delimiter=',')
             for row in spamreader:
                 print (row)
-                print(self.dob_processor(row[2].strip()))
+                print (self.dob_processor(row[2].strip()))
                 #print (','.join(row))
 
 d = DataProcessor()
