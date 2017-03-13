@@ -3,6 +3,10 @@ import datetime
 
 from app import constants
 
+from sklearn.cross_validation import train_test_split
+from sklearn import tree
+from sklearn.metrics import accuracy_score
+
 
 class DOBProcessor:
     """
@@ -60,12 +64,30 @@ class DataProcessor:
         """Reads file and pre-processes data for logic implementation"""
 
         dp = DOBProcessor()
+        created_input = []
+        created_target = []
         with open('input/data.csv', 'rt') as csvfile:
             spamreader = csv.reader(csvfile, delimiter=',')
             for row in spamreader:
                 print (row)
-                print (dp.date_processor(row[constants.DOB_INDEX].strip()))
-                #print (','.join(row))
+                dob = dp.date_processor(row[constants.DOB_INDEX].strip())
+                state = constants.STATE_TO_NUM[row[constants.STATE_INDEX].strip()]
+                city = constants.CITY_TO_NUM[row[constants.CITY_INDEX].strip()]
+                gender = constants.GENDER[row[constants.GENDER_INDEX].strip()]
+                smoker = constants.YES_NO[row[constants.SMOKER_INDEX].strip()]
+                plan = constants.PLANS[row[constants.PLANS_INDEX].strip()]
+                created_input.append([dob, state, city, gender, smoker])
+                created_target.append(plan)
+
+        print(created_input)
+        print(created_target)
+        X_train, X_test, y_train, y_test = train_test_split(created_input, created_target, test_size=.5)
+
+        classifier_1 = tree.DecisionTreeClassifier()
+        classifier_1.fit(X_train, y_train)
+        predictions = classifier_1.predict(X_test)
+        print('DecisionTreeClassifier accuracy_score=', accuracy_score(y_test, predictions))
+
 
 d = DataProcessor()
 d.read_data_file()
